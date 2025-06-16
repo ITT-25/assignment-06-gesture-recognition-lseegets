@@ -27,7 +27,9 @@ def normalize(points, size, n):
     return translate_to_origin(scaled_points)
 
 
-# Helper functions (from the JavaScript source code: https://depts.washington.edu/acelab/proj/dollar/dollar.js)
+# Helper functions
+# Code is based on this source code: https://depts.washington.edu/acelab/proj/dollar/dollar.js
+# And this pseudo-code: https://depts.washington.edu/acelab/proj/dollar/dollar.pdf
 
 def distance(p1, p2):
     dx = p2[0] - p1[0]
@@ -66,8 +68,6 @@ def resample(points, n):
 
     return new_points
 
-
-# The following code is based on this pseudo-code: https://depts.washington.edu/acelab/proj/dollar/dollar.pdf
 
 def centroid(points):
     x_sum = 0
@@ -128,3 +128,39 @@ def translate_to_origin(points):
         qy = point[1] - cy
         new_points.append((qx, qy))
     return new_points
+
+
+def distance_at_best_angle(points, template_points, angle_lower=-math.radians(45), angle_upper=math.radians(45), threshold=math.radians(2)):
+    phi = 0.5 * (-1 + math.sqrt(5))
+    x1 = phi * angle_lower + (1 - phi) * angle_upper
+    f1 = distance_at_angle(points, template_points, x1)
+    x2 = (1 - phi) * angle_lower + phi * angle_upper
+    f2 = distance_at_angle(points, template_points, x2)
+
+    while abs(angle_lower - angle_upper) > threshold:
+        if f1 < f2:
+            angle_upper = x2
+            x2 = x1
+            f2 = f1
+            x1 = phi * angle_lower + (1 - phi) * angle_upper
+            f1 = distance_at_angle(points, template_points, x1)
+        else:
+            angle_lower = x1
+            x1 = x2
+            f1 = f2
+            x2 = (1 - phi) * angle_lower + phi * angle_upper
+            f2 = distance_at_angle(points, template_points, x2)
+
+    return min(f1, f2)
+
+
+def path_distance(a, b):
+    d = 0
+    for i in range(0, len(a)):
+        d += math.dist(a[i], b[i])
+    return d / len(a)
+    
+
+def distance_at_angle(points, template_points, angle):
+    new_points = rotate_by(points, angle)
+    return path_distance(new_points, template_points)
