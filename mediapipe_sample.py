@@ -1,13 +1,21 @@
 import cv2
 import time
 import mediapipe as mp
+import numpy as np
+from collections import deque
+import pyautogui
+from pynput.mouse import Button, Controller
 
 
 DEBUG = True
 NUM_HANDS = 2
 DETECTION_CONFIDENCE = 0.9
 TRACKING_CONFIDENCE = 0.7
+PINCH_DIST = 30
+SCREEN_WIDTH, SCREEN_HEIGHT = pyautogui.size()
+MOUSE_FACTOR = 1.3
 
+mouse = Controller()
 
 class HandDetection():
     def __init__(self, num_hands=2, detection_confidence=0.9, tracking_confidence=0.7):
@@ -17,7 +25,11 @@ class HandDetection():
             min_tracking_confidence=tracking_confidence
         )
         self.cap = cv2.VideoCapture(0)
+        self.width = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+        self.height = self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
         self.running = False
+        self.pinched = False       # Tracks whether the user is pinching their thumb and index finger tips close together
+        self.smoothing_buffer = deque(maxlen=5)     # Used to prevent jittery mouse movement
 
 
     def run(self):
@@ -34,7 +46,31 @@ class HandDetection():
             # make detection visible
             if DEBUG and detection_success:
                 for handedness, hand_data in data.items():
-                    print(f'{handedness} hand detected. landmarks: {hand_data[0]}')
+                    index = np.array(hand_data[0][8])
+                    self.smoothing_buffer.append(index)
+                    thumb = np.array(hand_data[0][4])
+
+                    # Distance betweent the thumb and index finger tips (for pinch detection)
+                    distance = np.linalg.norm(index - thumb)
+
+                    smoothed = np.mean(self.smoothing_buffer, axis=0)
+                    x, y = smoothed
+
+                    # Calculate mouse pointer position
+                    mouse_x = int(x / self.width * SCREEN_WIDTH * MOUSE_FACTOR)
+                    mouse_y = int(y / self.height * SCREEN_HEIGHT * MOUSE_FACTOR)
+                    mouse.position = (mouse_x, mouse_y)
+
+                    # Check for pinching and press/release button accordingly
+                    if distance < PINCH_DIST:
+                        if not self.pinched:
+                            self.pinched = True
+                            mouse.press(Button.left)
+                    elif distance > PINCH_DIST:
+                        if self.pinched:
+                            mouse.release(Button.left)
+                            self.pinched = False
+                    
                     self.draw_landmarks(frame, hand_data[1])
 
             # draw image

@@ -92,6 +92,12 @@ def scale_to(points, size):
     width = max_x - min_x
     height = max_y - min_y
 
+    # Avoid division by zero later on
+    if width == 0:
+        width = 1e-5
+    if height == 0:
+        height = 1e-5
+
     new_points = []
     for point in points:
         qx = (point[0] - min_x) * size / width
