@@ -4,6 +4,7 @@ from recognizer import recognize
 
 WINDOW_WIDTH = 500
 WINDOW_HEIGHT = 500
+LINE_THICKNESS = 3
 
 win = window.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
 dots = []
@@ -26,7 +27,7 @@ def on_mouse_release(x, y, button, modifiers):
 @win.event
 def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
     if buttons & window.mouse.LEFT:
-        dots.append(shapes.Rectangle(x, y, 5, 5, (255, 255, 255)))
+        dots.append(shapes.Rectangle(x, y, LINE_THICKNESS, LINE_THICKNESS, (255, 255, 255)))
         points.append((x, WINDOW_HEIGHT - y))
         
 
@@ -39,7 +40,7 @@ def on_draw():
         else:
             dots[i].draw()
             if dots[i].x - dots[i-1].x != 0 or dots[i].y - dots[i-1].y != 0:
-                shapes.Line(dots[i].x, dots[i].y, dots[i-1].x, dots[i-1].y).draw()
+                shapes.Line(dots[i].x, dots[i].y, dots[i-1].x, dots[i-1].y, LINE_THICKNESS).draw()
     text.Label(f'Input: {input_gesture}', font_size=20, x=150, y=WINDOW_HEIGHT-30, anchor_x='center').draw()
 
 pyglet.app.run()

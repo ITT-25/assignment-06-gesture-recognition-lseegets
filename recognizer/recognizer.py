@@ -1,12 +1,10 @@
 import math
-from recognizer_helpers import load_template_points, normalize, distance_at_best_angle
+from recognizer_helpers import normalize, distance_at_best_angle
+from templates import templates
 
-GESTURES = ["rectangle", "circle", "check", "delete_mark", "pigtail"]
-DIR = "xml_logs/s01/medium/"
 SIZE = 100
 NUM_POINTS = 64
 
-templates = load_template_points(GESTURES, DIR)
 normalized_templates = {}
 
 for template in templates:

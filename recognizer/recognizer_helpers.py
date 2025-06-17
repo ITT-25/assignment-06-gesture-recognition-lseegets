@@ -1,23 +1,4 @@
 import math
-import os
-import xml.etree.ElementTree as ET
-
-
-def load_template_points(gestures, directory):
-    templates = {}
-
-    for gesture in gestures:
-        filename = f"{gesture}01.xml"
-        filepath = os.path.join(directory, filename)
-        tree = ET.parse(filepath)
-        root = tree.getroot()
-
-        points = []
-        for point in root.findall("Point"):
-            points.append((float(point.attrib["X"]), float(point.attrib["Y"])))
-        templates[gesture] = points
-
-    return templates 
 
 def normalize(points, size, n):
     resampled_points = resample(points, n)
