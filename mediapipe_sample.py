@@ -29,7 +29,7 @@ class HandDetection():
         self.height = self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
         self.running = False
         self.pinched = False       # Tracks whether the user is pinching their thumb and index finger tips close together
-        self.smoothing_buffer = deque(maxlen=5)     # Used to prevent jittery mouse movement
+        self.smoothing_buffer = deque(maxlen=4)     # Used to prevent jittery mouse movement
 
 
     def run(self):

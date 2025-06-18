@@ -74,7 +74,7 @@ def save_to_xml(points, gesture_name, subject="1", speed="slow", app_name="Gestu
         "AppName": app_name,
         "AppVer": app_ver,
         "Date": dt.strftime("%A, %B, %d, %Y"),
-        "TimeOfDay": dt.strftime("%I:%M:%S:%p")
+        "TimeOfDay": dt.strftime("%I:%M:%S %p")
     })
     for x, y, t in points:
         ET.SubElement(gesture, "Point", {
@@ -84,7 +84,10 @@ def save_to_xml(points, gesture_name, subject="1", speed="slow", app_name="Gestu
         })
     tree = ET.ElementTree(gesture)
     ET.indent(tree, space='  ', level=0)
-    tree.write(os.path.join(dir_path, name + ".xml"))
+    xml_path = os.path.join(dir_path, name + ".xml")
+    with open(xml_path, "wb") as f:
+        f.write(b'<?xml version="1.0" encoding="utf-8" standalone="yes"?>\n')
+        tree.write(f)
 
 
 @win.event
