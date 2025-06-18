@@ -33,10 +33,11 @@ class GameManager:
         self.has_started = False
         self.mode = ""
         self.winner = None
+        self.game_gestures.clear()
+        self.tie = False
     
 
     def determine_winner(self):
-        print(self.game_gestures)
         if len(self.game_gestures) == 2:
             if self.game_gestures[0] == self.game_gestures[1]:
                 self.winner = None
@@ -89,11 +90,11 @@ class GameManager:
 
 
     def draw_finish_screen(self, width, height, y_default):
-        text.Label(f"Winner: {self.winner}", font_size=24, x=width // 2, y=y_default + 40, anchor_x='center').draw()
-        if self.mode == "com":
-            text.Label(f"Your symbol: {self.game_gestures[1]}", font_size=16, x=width // 2, y=y_default - 30, anchor_x='center').draw()
-            text.Label(f"COM symbol: {self.game_gestures[0]}", font_size=16, x=width // 2, y=y_default - 2 * 30, anchor_x='center').draw()
-        elif self.mode == "multi":
-            text.Label(f"Player 1 symbol: {self.game_gestures[0]}", font_size=16, x=width // 2, y=y_default - 30, anchor_x='center').draw()
-            text.Label(f"Player 2 symbol: {self.game_gestures[1]}", font_size=16, x=width // 2, y=y_default - 2 * 30, anchor_x='center').draw()
-        text.Label("Press SPACE to get back to main menu", font_size=16, x=height // 2, y=y_default - 4 * 30, anchor_x='center').draw()
+        if len(self.game_gestures) == 2:
+            text.Label(f"Winner: {self.winner}", font_size=24, x=width // 2, y=y_default + 40, anchor_x='center').draw()
+            if self.mode == "com":
+                text.Label(f"Your symbol: {self.game_gestures[1]}", font_size=16, x=width // 2, y=y_default - 30, anchor_x='center').draw()
+                text.Label(f"COM symbol: {self.game_gestures[0]}", font_size=16, x=width // 2, y=y_default - 2 * 30, anchor_x='center').draw()
+            elif self.mode == "multi":
+                text.Label(f"Player 1 symbol: {self.game_gestures[0]}", font_size=16, x=width // 2, y=y_default - 30, anchor_x='center').draw()
+                text.Label(f"Player 2 symbol: {self.game_gestures[1]}", font_size=16, x=width // 2, y=y_default - 2 * 30, anchor_x='center').draw()
