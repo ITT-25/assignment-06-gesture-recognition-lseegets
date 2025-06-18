@@ -58,16 +58,18 @@ def on_key_press(symbol, modifiers):
     elif symbol == window.key.M:
         game.start("multi")
 
-@win.event
-def on_mouse_press(x, y, button, modifiers):
-    dots.clear()
-    points.clear()
+# @win.event
+# def on_mouse_press(x, y, button, modifiers):
+#     dots.clear()
+#     points.clear()
 
 @win.event
 def on_mouse_release(x, y, button, modifiers):
     if is_valid_gesture(points) and len(game.game_gestures) < 2:
         input_gesture = recognize([(x, y) for x, y, _ in points])
         game.game_gestures.append(input_gesture)
+        dots.clear()
+        points.clear()
         if len(game.game_gestures) == 2:
             game.determine_winner()
             if game.winner == None:
@@ -105,12 +107,11 @@ def on_draw():
                 dots[i].draw()
                 if dots[i].x - dots[i-1].x != 0 or dots[i].y - dots[i-1].y != 0:
                     shapes.Line(dots[i].x, dots[i].y, dots[i-1].x, dots[i-1].y, LINE_THICKNESS).draw()
-        text.Label(f'Input: {input_gesture}', font_size=20, x=150, y=WINDOW_HEIGHT-30, anchor_x='center').draw()
+        game.draw_game_info(WINDOW_HEIGHT)
     elif game.has_finished:
         dots.clear()
         points.clear()
-        text.Label(f"Winner: {game.winner}", font_size=24, x=WINDOW_WIDTH // 2, y=y + 40, anchor_x='center').draw()
-        text.Label("Press SPACE to get back to main menu", font_size=16, x=WINDOW_WIDTH // 2, y=y - 30, anchor_x='center').draw()
+        game.draw_finish_screen(WINDOW_WIDTH, WINDOW_HEIGHT, y)
 
 threading.Thread(target=detector.run, daemon=True).start()
 pyglet.app.run()
