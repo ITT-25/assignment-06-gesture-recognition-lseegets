@@ -32,6 +32,9 @@ def resample(points, n):
     i = 1
     while i < len(points):
         d = distance(points[i-1], points[i])
+        if d == 0:  # Avoid division by zero later on
+            i += 1
+            continue
         if D + d >= I:
             qx = points[i-1][0] + ((I - D) / d) * (points[i][0] - points[i-1][0])
             qy = points[i-1][1] + ((I - D) / d) * (points[i][1] - points[i-1][1])

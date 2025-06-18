@@ -1,5 +1,8 @@
 import pyglet
 from pyglet import window, shapes, text
+import xml.etree.ElementTree as ET
+import time
+from datetime import datetime
 from recognizer import recognize
 import threading
 import sys
@@ -33,6 +36,57 @@ def is_valid_gesture(points):
     return False
 
 
+def save_to_xml(points, gesture_name, subject="1", speed="slow", app_name="Gestures", app_ver="1.0.0.0"):
+    if not points:
+        return
+    if gesture_name == "delete":
+        gesture_name = "delete_mark"
+
+    base_dir =  os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    dir_path = os.path.join(base_dir, f"datasets/hand_input/{speed}/s{str(subject).zfill(2)}")
+    os.makedirs(dir_path, exist_ok=True)
+    files = os.listdir(dir_path)
+    gesture_files = [file for file in files if file.startswith(gesture_name) and file.endswith(".xml")]
+
+    # Check which indices are already in use and fill in the numbers accordingly
+    used_numbers = []
+    for f in gesture_files:
+        number = f[len(gesture_name):-4]
+        if number.isdigit():
+            used_numbers.append(int(number))
+    next_number = 1
+    while next_number in used_numbers:
+        next_number += 1
+
+    number = next_number
+    name = gesture_name + str(number).zfill(2)
+    dt = datetime.now()
+    start_time = points[0][2]
+    end_time = points[-1][2]
+    millseconds = end_time - start_time
+    gesture = ET.Element("Gesture", {
+        "Name": name,
+        "Subject": subject,
+        "Speed": speed,
+        "Number": str(number),
+        "NumPts": str(len(points)),
+        "Millseconds": str(millseconds),
+        "AppName": app_name,
+        "AppVer": app_ver,
+        "Date": dt.strftime("%A, %B, %d, %Y"),
+        "TimeOfDay": dt.strftime("%I:%M:%S:%p")
+    })
+    for x, y, t in points:
+        ET.SubElement(gesture, "Point", {
+            "X": str(x),
+            "Y": str(y),
+            "T": str(t)
+        })
+    tree = ET.ElementTree(gesture)
+    ET.indent(tree, space='  ', level=0)
+    tree.write(os.path.join(dir_path, name + ".xml"))
+
+
 @win.event
 def on_key_press(symbol, modifiers):
     global is_recording, has_started
@@ -53,17 +107,20 @@ def on_mouse_press(x, y, button, modifiers):
 
 @win.event
 def on_mouse_release(x, y, button, modifiers):
-    global input_gesture
+    global input_gesture, is_recording
     if is_valid_gesture(points):
-        input_gesture = recognize(points)
+        input_gesture = recognize([(x, y) for x, y, _ in points])
+        if is_recording:
+            save_to_xml(points, input_gesture)
     else:
         input_gesture = None
 
 @win.event
 def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
-    if buttons & window.mouse.LEFT:
-        dots.append(shapes.Rectangle(x, y, LINE_THICKNESS, LINE_THICKNESS, (255, 255, 255)))
-        points.append((x, WINDOW_HEIGHT - y))
+    if has_started:
+        if buttons & window.mouse.LEFT:
+            dots.append(shapes.Rectangle(x, y, LINE_THICKNESS, LINE_THICKNESS, (255, 255, 255)))
+            points.append((int(x), WINDOW_HEIGHT - int(y), int(time.time() * 1000)))
         
 
 @win.event
