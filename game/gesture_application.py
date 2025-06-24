@@ -124,7 +124,7 @@ def on_draw():
         multi_button.draw()
         text.Label("ROCK PAPER SCISSORS", font_size=24, x=WINDOW_WIDTH // 2, y=y + 40, anchor_x='center').draw()
         text.Label("COM", font_size=16, x=WINDOW_WIDTH // 2, y=y - 30, anchor_x='center').draw()
-        text.Label("2 vs. 2", font_size=16, x=WINDOW_WIDTH // 2, y=y - 3 * 30, anchor_x='center').draw()
+        text.Label("1 vs. 1", font_size=16, x=WINDOW_WIDTH // 2, y=y - 3 * 30, anchor_x='center').draw()
     elif game.has_started and not game.has_finished:
         if game.tie:
             dots.clear()

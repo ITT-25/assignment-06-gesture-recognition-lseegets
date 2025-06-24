@@ -7,10 +7,15 @@ NUM_POINTS = 64
 
 normalized_templates = {}
 
+
+# Normalize the templates
+
 for template in templates:
     normalized_points = normalize(templates[template], SIZE, NUM_POINTS)
     normalized_templates[template] = normalized_points
 
+
+# Recognize the input gesture
 
 def recognize(input_points):
     points = normalize(input_points, SIZE, NUM_POINTS)

@@ -36,6 +36,8 @@ def is_valid_gesture(points):
     return False
 
 
+# Save a gesture to .xml
+
 def save_to_xml(points, gesture_name, subject="1", speed="slow", app_name="Gestures", app_ver="1.0.0.0"):
     if not points:
         return
@@ -43,7 +45,7 @@ def save_to_xml(points, gesture_name, subject="1", speed="slow", app_name="Gestu
         gesture_name = "delete_mark"
 
     base_dir =  os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    dir_path = os.path.join(base_dir, f"datasets/hand_input/{speed}/s{str(subject).zfill(2)}")
+    dir_path = os.path.join(base_dir, f"datasets/midair/{speed}/s{str(subject).zfill(2)}")
     os.makedirs(dir_path, exist_ok=True)
     files = os.listdir(dir_path)
     gesture_files = [file for file in files if file.startswith(gesture_name) and file.endswith(".xml")]
