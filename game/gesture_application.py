@@ -21,11 +21,9 @@ points = []
 input_gesture = None
 game = GameManager()
 
-
-com_button = pyglet.shapes.Rectangle(x=WINDOW_WIDTH // 2, y=WINDOW_HEIGHT // 2 + 40 - 30, width=60, height=40, color=(100, 100, 100))
-multi_button = pyglet.shapes.Rectangle(x=WINDOW_WIDTH // 2, y=WINDOW_HEIGHT // 2 + 40 - 3 * 30, width=70, height=40, color=(100, 100, 100))
-restart_button = pyglet.shapes.Rectangle(x=WINDOW_WIDTH // 2, y=WINDOW_HEIGHT // 2 + 40 - 4 * 30, width=120, height=40, color=(100, 100, 100))
-
+com_button = pyglet.shapes.Rectangle(x=(WINDOW_WIDTH // 2) - 80 // 2, y=((WINDOW_HEIGHT // 2 + 40) - 30) - 40 // 2, width=100, height=50, color=(100, 100, 100))
+multi_button = pyglet.shapes.Rectangle(x=(WINDOW_WIDTH // 2) - 90 // 2, y=((WINDOW_HEIGHT // 2 + 40) - 5 * 30) - 40 // 2, width=110, height=50, color=(100, 100, 100))
+restart_button = pyglet.shapes.Rectangle(x=(WINDOW_WIDTH // 2) - 120 // 2, y=((WINDOW_HEIGHT // 2 + 40) - 4 * 30) - 40 // 2, width=120, height=60, color=(100, 100, 100))
 
 def restart_upon_tie(dt):
     global restart_scheduled
@@ -86,9 +84,9 @@ def on_key_press(symbol, modifiers):
 @win.event
 def on_mouse_press(x, y, button, modifiers):
     if com_button.x <= x <= com_button.x + com_button.width and com_button.y <= y <= com_button.y + com_button.height:
-        pyglet.clock.schedule_once(start_game_com, 0.5)
+        pyglet.clock.schedule_once(start_game_com, 1)
     elif multi_button.x <= x <= multi_button.x + multi_button.width and multi_button.y <= y <= multi_button.y + multi_button.height:
-        pyglet.clock.schedule_once(start_game_multi, 0.5)
+        pyglet.clock.schedule_once(start_game_multi, 1)
     elif restart_button.x <= x <= restart_button.x + restart_button.width and restart_button.y <= y <= restart_button.y + restart_button.height:
         game.restart()
 
@@ -122,9 +120,9 @@ def on_draw():
     if not game.has_started:
         com_button.draw()
         multi_button.draw()
-        text.Label("ROCK PAPER SCISSORS", font_size=24, x=WINDOW_WIDTH // 2, y=y + 40, anchor_x='center').draw()
-        text.Label("COM", font_size=16, x=WINDOW_WIDTH // 2, y=y - 30, anchor_x='center').draw()
-        text.Label("1 vs. 1", font_size=16, x=WINDOW_WIDTH // 2, y=y - 3 * 30, anchor_x='center').draw()
+        text.Label("ROCK PAPER SCISSORS", font_size=28, x=WINDOW_WIDTH // 2, y=y + 40, anchor_x='center').draw()
+        text.Label("COM", font_size=24, x=WINDOW_WIDTH // 2, y=y - 30, anchor_x='center').draw()
+        text.Label("1 vs. 1", font_size=24, x=WINDOW_WIDTH // 2, y=y - 5 * 30, anchor_x='center').draw()
     elif game.has_started and not game.has_finished:
         if game.tie:
             dots.clear()
@@ -143,7 +141,7 @@ def on_draw():
         points.clear()
         game.draw_finish_screen(WINDOW_WIDTH, WINDOW_HEIGHT, y)
         restart_button.draw()
-        text.Label("Restart", font_size=16, x=WINDOW_HEIGHT // 2, y=y - 4 * 30, anchor_x='center').draw()
+        text.Label("Restart", font_size=24, x=WINDOW_WIDTH // 2, y=y - 4 * 30, anchor_x='center').draw()
 
 threading.Thread(target=detector.run, daemon=True).start()
 pyglet.app.run()

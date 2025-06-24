@@ -47,36 +47,36 @@ class GameManager:
                     if self.mode == "com":
                         self.winner = "Player"
                     elif self.mode == "multi":
-                        self.winner = "Player 1"
+                        self.winner = "Player 2"
                 elif self.game_gestures[1] == "circle":
                     if self.mode == "com":
                         self.winner = "COM"
                     elif self.mode == "multi":
-                        self.winner = "Player 2"
+                        self.winner = "Player 1"
 
             elif self.game_gestures[0] == "circle":
                 if self.game_gestures[1] == "rectangle":
                     if self.mode == "com":
                         self.winner = "Player"
                     elif self.mode == "multi":
-                        self.winner = "Player 1"
+                        self.winner = "Player 2"
                 elif self.game_gestures[1] == "v":
                     if self.mode == "com":
                         self.winner = "COM"
                     elif self.mode == "multi":
-                        self.winner = "Player 2"
+                        self.winner = "Player 1"
 
             elif self.game_gestures[0] == "v":
                 if self.game_gestures[1] == "circle":
                     if self.mode == "com":
                         self.winner = "Player"
                     elif self.mode == "multi":
-                        self.winner = "Player 1"
+                        self.winner = "Player 2"
                 elif self.game_gestures[1] == "rectangle":
                     if self.mode == "com":
                         self.winner == "COM"
                     elif self.mode == "multi":
-                        self.winner = "Player 2"
+                        self.winner = "Player 1"
 
 
     def draw_game_info(self, height):
